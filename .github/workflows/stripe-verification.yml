@@ -63,6 +63,7 @@ jobs:
             body:JSON.stringify({package:'unknown',price:1})
           }));
           if(invalid.status!==400)throw new Error('Unknown package was not rejected');
+          delete process.env.STRIPE_CHECKOUT_ENABLED;
           process.env.STRIPE_SECRET_KEY = 'sk_test_ci_mock_only';
           process.env.STRIPE_PRICE_STARTER = 'price_ciMock1';
           process.env.STRIPE_PRICE_GROWTH = 'price_ciMock2';
