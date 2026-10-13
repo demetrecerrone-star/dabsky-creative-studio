@@ -1,0 +1,67 @@
+name: Verify website and Stripe integration
+
+on:
+  push:
+    paths:
+      - "netlify/functions/**"
+      - "package.json"
+      - "netlify.toml"
+      - "scripts/**"
+      - "payments.html"
+      - "payment-success.html"
+      - "STRIPE_SETUP.md"
+      - ".github/workflows/stripe-verification.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Stripe server SDK
+        run: npm install --no-audit --no-fund
+      - name: Validate Netlify functions and static site build
+        run: |
+          node --check netlify/functions/create-checkout.mjs
+          node --check netlify/functions/stripe-webhook.mjs
+          node --check scripts/build-site.mjs
+          npm run build
+          test -s dist/index.html
+          test -s dist/payments.html
+          test -s dist/payment-success.html
+          test -s dist/assets/Dabsky_Creative_Studio_Branded_Intro.mp4
+          test -s dist/assets/bella-forno-video-demo.mp4
+          test ! -e dist/.env.example
+          test ! -e dist/netlify/functions/create-checkout.mjs
+          grep -q 'STRIPE_CHECKOUT_ENABLED' netlify/functions/create-checkout.mjs
+          grep -q 'Stripe' dist/payments.html
+      - name: Test fail-closed checkout behavior
+        run: |
+          node --input-type=module <<'JS'
+          import handler from './netlify/functions/create-checkout.mjs';
+          delete process.env.STRIPE_SECRET_KEY;
+          process.env.STRIPE_CHECKOUT_ENABLED='false';
+          const get = await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'));
+          if(get.status!==200)throw new Error('Status endpoint failed');
+          const status=await get.json();
+          if(status.enabled!==false)throw new Error('Checkout default is not disabled');
+          const post=await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Origin':'https://dabskycreativestudio.netlify.app'},
+            body:JSON.stringify({package:'starter'})
+          }));
+          if(post.status!==503)throw new Error('Disabled checkout did not return 503: '+post.status);
+          const invalid=await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({package:'unknown',price:1})
+          }));
+          if(invalid.status!==400)throw new Error('Unknown package was not rejected');
+          console.log('Checkout fails closed and rejects unknown packages.');
+          JS
