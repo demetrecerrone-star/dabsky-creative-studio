@@ -1,0 +1,47 @@
+name: Import Dabsky website release
+
+on:
+  push:
+    paths:
+      - "Dabsky_Creative_Studio_Website_With_Video.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out website repository
+        uses: actions/checkout@v4
+      - name: Extract and validate release
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import pathlib, zipfile
+          archive = pathlib.Path("Dabsky_Creative_Studio_Website_With_Video.zip")
+          if not archive.is_file():
+              raise SystemExit("Upload Dabsky_Creative_Studio_Website_With_Video.zip to repository root first.")
+          with zipfile.ZipFile(archive) as z:
+              for f in z.infolist():
+                  p = pathlib.PurePosixPath(f.filename)
+                  if p.is_absolute() or ".." in p.parts:
+                      raise SystemExit("Unsafe ZIP entry: " + f.filename)
+              z.extractall(".")
+          for essential in ("index.html", "styles.css", "script.js", "assets/bella-forno-video-demo.mp4"):
+              if not pathlib.Path(essential).is_file():
+                  raise SystemExit("Missing required website file: " + essential)
+          PY
+      - name: Commit live-site content for Netlify
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html styles.css script.js robots.txt _headers assets README.txt
+          if git diff --cached --quiet; then
+            echo "No website changes to publish."
+          else
+            git commit -m "Publish Dabsky website with Bella Forno video sample"
+            git push origin HEAD:main
+          fi
