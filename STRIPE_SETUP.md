@@ -35,7 +35,8 @@ Netlify > Dabsky site > Project configuration > Environment variables (Functions
   STRIPE_PRICE_GROWTH = test mode price_... for $249/month
   STRIPE_PRICE_PREMIUM = test mode price_... for $399/month
   STRIPE_SITE_URL = https://dabskycreativestudio.netlify.app
-  STRIPE_CHECKOUT_ENABLED = false (until tests pass)
+  STRIPE_CHECKOUT_ENABLED = optional for test mode; omit to auto-enable with a valid sk_test_ key, or use false to disable
+  (Live payments require STRIPE_CHECKOUT_ENABLED=true and STRIPE_ALLOW_LIVE=true with a live key)
   STRIPE_AUTOMATIC_TAX_ENABLED = false (until tax registrations/configuration verified)
   STRIPE_ALLOW_LIVE = false
   STRIPE_WEBHOOK_SECRET = test webhook endpoint secret from Stripe Dashboard
@@ -67,3 +68,6 @@ Stripe account: Dabsky Creative Studio (test/sandbox; not live).
 | Premium Brand | `prod_VR3dfrOqaHkLrB` | `price_1UQBWWGeRHONJNZy7lJGpapq` | USD 399.00/month |
 
 The Price IDs above are identifiers, not credentials; enter them into Netlify environment variables as described earlier. Keep checkout disabled until the rotated test secret is in Netlify and tests pass. The Stripe implementation planner guide was completed and accepted for hosted checkout, flat monthly subscription pricing, and invoice-hosted payment.
+
+## Minimal test-mode setup (October 13, 2026)
+The initial four Netlify variables are sufficient for simulated test checkout: STRIPE_SECRET_KEY (rotated sk_test_ key), STRIPE_PRICE_STARTER, STRIPE_PRICE_GROWTH, STRIPE_PRICE_PREMIUM. The code defaults the site URL to https://dabskycreativestudio.netlify.app and Tax to disabled. STRIPE_CHECKOUT_ENABLED is optional in test mode: omitting it enables testing when the key and price IDs exist; setting it to false explicitly disables all checkout. Stripe Live Checkout will **never** turn on without a live key AND both explicit values STRIPE_CHECKOUT_ENABLED=true and STRIPE_ALLOW_LIVE=true. The publicly reachable payments page labels simulated checkout unmistakably as TEST MODE.
