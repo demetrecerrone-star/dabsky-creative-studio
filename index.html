@@ -50,7 +50,7 @@
         </div>
         <div class="studio-intro-video">
           <video id="studio-intro-player" controls playsinline preload="none" poster="assets/brand-mark.webp" aria-label="Dabsky Creative Studio animated brand introduction" hidden>
-            <source src="assets/dabsky-creative-studio-intro.mp4" type="video/mp4" />
+            <source src="assets/Dabsky_Creative_Studio_Branded_Intro.mp4" type="video/mp4" />
           </video>
           <div id="studio-intro-fallback" class="studio-intro-fallback" aria-label="Animated Dabsky Creative Studio introduction">
             <div class="studio-intro-nebula" aria-hidden="true"></div>
@@ -133,7 +133,7 @@
       var p=document.getElementById('studio-intro-player');
       var f=document.getElementById('studio-intro-fallback');
       if (!p || !f) return;
-      fetch('assets/dabsky-creative-studio-intro.mp4',{method:'HEAD'})
+      fetch('assets/Dabsky_Creative_Studio_Branded_Intro.mp4',{method:'HEAD'})
         .then(function(r){if(r.ok){p.hidden=false;f.hidden=true;}})
         .catch(function(){});
     }());
