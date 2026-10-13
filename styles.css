@@ -56,3 +56,22 @@
 @keyframes studioStars{0%{opacity:.3;transform:scale(1)}100%{opacity:.9;transform:scale(1.08)}}
 @keyframes studioReveal{0%,5%{opacity:0;transform:translateY(16px) scale(.93);filter:blur(5px)}20%,85%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}95%,100%{opacity:0;transform:translateY(-8px) scale(1.04);filter:blur(3px)}}
 @media(prefers-reduced-motion:reduce){.studio-intro-nebula,.studio-intro-ring,.studio-intro-glints,.studio-intro-lockup{animation:none!important;opacity:1;filter:none}}
+
+/* Payments and billing: discoverable without mistaking demo for real checkout. */
+.nav-links .nav-billing{color:#f0d9ff}
+.test-indicator{display:inline-block;margin-left:3px;vertical-align:middle;border:1px solid #8755b6;border-radius:6px;background:#372146;padding:2px 5px;letter-spacing:1px;font-size:8px;font-weight:900;color:#e7c9ff}
+.price-test-link{display:block;margin-top:13px;padding:10px 3px;text-align:center;font-size:12px;font-weight:800;color:#d7aeff;text-decoration:underline;text-underline-offset:4px}
+.price-test-link:hover,.price-test-link:focus-visible{color:#fff}
+.website-billing-panel{display:flex;align-items:center;justify-content:space-between;gap:35px;margin-top:38px;padding:27px 30px;border:1px solid #784ba0;border-radius:20px;background:radial-gradient(ellipse at 95% 0%,#7a3bbb38,transparent 65%),linear-gradient(140deg,#231330,#130f1a)}
+.website-billing-panel>div:first-child{flex:1;min-width:0}
+.billing-eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#d3adff}
+.website-billing-panel h3{font-size:clamp(1.35rem,2.5vw,1.8rem);margin:13px 0 10px;line-height:1.25}
+.website-billing-panel p{margin:0;font-size:13px;line-height:1.75;color:#c1b3d0}
+.website-billing-panel p strong{color:#f1dfff}
+.website-billing-actions{display:flex;flex-direction:column;gap:12px;min-width:245px}
+.website-billing-actions .button{width:100%}
+@media(max-width:1150px) and (min-width:701px){.nav-links{gap:15px}.nav-links>a{font-size:12px}.nav-links .nav-cta{padding:11px 12px}.nav-cta span{margin-left:4px}}
+@media(max-width:850px) and (min-width:701px){.nav-links{gap:11px}.nav-links>a{font-size:11px}.nav-links .nav-cta{padding:10px 8px}.brand-name{font-size:19px}.brand-name small{font-size:7px;letter-spacing:2px}}
+@media(max-width:780px) and (min-width:701px){.nav-links a[href="#video"]{display:none}}
+@media(max-width:900px){.website-billing-panel{flex-direction:column;align-items:stretch}.website-billing-actions{flex-direction:row;min-width:0}}
+@media(max-width:700px){.website-billing-panel{padding:24px 20px}.website-billing-actions{flex-direction:column}}
