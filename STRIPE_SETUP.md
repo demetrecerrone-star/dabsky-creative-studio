@@ -56,3 +56,14 @@ Environment variables declared in netlify.toml do NOT reach Netlify Functions. D
 
 ## Notes
 The Stripe ChatGPT app from the user's direct link was unavailable in this workspace and the integration planner was not available. This manual implementation is based on Stripe/Netlify's documented patterns, rather than an output from that planner.
+
+## Verified Stripe test-mode products (created October 13, 2026)
+Stripe account: Dabsky Creative Studio (test/sandbox; not live).
+
+| Package | Test product ID | Test price ID | Amount |
+|---|---|---|---|
+| Starter Trial | `prod_VR3de0xrOZ9ULI` | `price_1UQBWTGeRHONJNZy1BOvnpjm` | USD 79.00 one-time |
+| Business Growth | `prod_VR3dOyIg1CNpWq` | `price_1UQBWUGeRHONJNZyG2UwiMmG` | USD 249.00/month |
+| Premium Brand | `prod_VR3dfrOqaHkLrB` | `price_1UQBWWGeRHONJNZy7lJGpapq` | USD 399.00/month |
+
+The Price IDs above are identifiers, not credentials; enter them into Netlify environment variables as described earlier. Keep checkout disabled until the rotated test secret is in Netlify and tests pass. The Stripe implementation planner guide was completed and accepted for hosted checkout, flat monthly subscription pricing, and invoice-hosted payment.
