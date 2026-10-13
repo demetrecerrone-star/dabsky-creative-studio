@@ -44,9 +44,9 @@
 <section id="manage-subscription" aria-labelledby="manage-subscription-title" style="background:linear-gradient(150deg,#21142e,#130d1b);border:1px solid #76539b;border-radius:20px;padding:27px;margin:28px 0;">
 <p class="kicker">ALREADY SUBSCRIBED?</p>
 <h2 id="manage-subscription-title" style="margin:6px 0 8px;font-size:clamp(1.35rem,3vw,2rem)">Manage or cancel your subscription</h2>
-<p style="color:#c9bbd9;line-height:1.7;max-width:690px;">Manage your live subscription through the secure link provided in your Stripe billing emails. The portal below is only for existing sandbox subscriptions.</p>
-<a class="button button-outline" href="https://billing.stripe.com/p/login/test_bJe3cv2KD9uPgL18Uf5AQ00" rel="noopener noreferrer">Manage SANDBOX subscription ↗</a>
-<p style="color:#bcadce;font-size:13px;line-height:1.6;margin-top:12px;">Stripe will verify your email address before showing your subscription. Cancellation takes effect at the end of the billing period.</p>
+<p style="color:#c9bbd9;line-height:1.7;max-width:690px;">Manage your live subscription through the secure link provided in your Stripe billing emails. For assistance with billing or cancellation, contact us using the email below.</p>
+<a class="button button-outline" href="mailto:dabskycreativestudio@gmail.com?subject=Subscription%20management%20request">Request subscription assistance ↗</a>
+<p style="color:#bcadce;font-size:13px;line-height:1.6;margin-top:12px;">We can help you locate the correct subscription management link and request cancellation. Cancellation takes effect at the end of the billing period.</p>
 </section>
 <section class="payment-notice" id="custom-invoices" aria-labelledby="custom-invoices-title" style="margin:32px 0"><h2 id="custom-invoices-title">Custom freelance project invoices</h2><p>Freelance creative services are provided by Demetre S Cerrone. Request a written quote for logos, brand identity, promotional videos, and other custom projects. After we agree on the scope, price, and delivery schedule, you can receive a secure Stripe-hosted invoice.</p><p><strong>Payment options:</strong> full payment before work begins, or a separately agreed 50% deposit and 50% balance. Deposits, milestones, revision limits, and refund terms are confirmed in writing before any payment.</p><p><strong>Current status:</strong> Custom invoices are issued only after we approve a written quote. Standard package checkout uses live Stripe payments.</p><!-- Netlify Forms: detected during production build; requires form detection enabled in site settings. -->
 <form class="invoice-request-form" id="invoice-request-form" name="custom-invoice-requests" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/payments.html"><input type="hidden" name="form-name" value="custom-invoice-requests"><p hidden><label>Do not fill out: <input name="bot-field"></label></p><label>Your name *<input name="name" required maxlength="100" autocomplete="name"></label><label>Email address *<input name="email" type="email" required maxlength="200" autocomplete="email"></label><label>Business or brand (optional)<input name="business" maxlength="130"></label><label>What do you need? *<select name="service" required><option value="">Choose a service</option><option>Logo design</option><option>Brand identity</option><option>Social media graphics</option><option>Promotional video</option><option>Other custom project</option></select></label><label>Estimated budget (optional)<select name="budget"><option value="">Not sure yet</option><option>Under $100</option><option>$100–$249</option><option>$250–$499</option><option>$500–$999</option><option>$1,000+</option></select></label><label>Project details *<textarea name="details" required maxlength="3000" placeholder="Tell us what you need, deadlines, and any creative direction."></textarea></label><button class="button button-outline" type="submit">Submit custom invoice request ↗</button><p class="invoice-request-status" id="invoice-request-status" role="status" aria-live="polite">Your request is submitted through the website, not your email app. This is a quote request, not an invoice or payment.</p></form></section>
@@ -78,24 +78,8 @@ if(new URLSearchParams(location.search).get("request")==="received"){document.ge
   growth:'https://buy.stripe.com/6oUbJ170TfTd52j3zV5AQ01',
   premium:'https://buy.stripe.com/28E6oH4SL4avcuL4DZ5AQ02'
  });
- const TEST_LINKS=Object.freeze({
-  starter:'https://buy.stripe.com/test_bJe3cv2KD9uPgL18Uf5AQ00',
-  growth:'https://buy.stripe.com/test_6oUbJ170TfTd52j3zV5AQ01',
-  premium:'https://buy.stripe.com/test_28E6oH4SL4avcuL4DZ5AQ02'
- });
  const message=document.getElementById('payment-status');
  const buttons=[...document.querySelectorAll('[data-pay]')];
- let backendMode='disabled';
- let backendPackages={};
- try{
-  const response=await fetch('/.netlify/functions/create-checkout',{cache:'no-store'});
-  if(response.ok){
-   const config=await response.json();
-   backendMode=config.enabled?config.mode:'disabled';
-   backendPackages=config.packages||{};
-  }
- }catch{/* Stripe-hosted test links work without a serverless function. */}
- const backendReady=id=>(backendMode==='test'||backendMode==='live')&&backendPackages[id]===true;
  buttons.forEach(button=>{
   button.disabled=!LIVE_LINKS[button.dataset.pay];
   button.textContent='Secure LIVE checkout ↗';
@@ -107,23 +91,7 @@ if(new URLSearchParams(location.search).get("request")==="received"){document.ge
   if(button.disabled)return;
   const product=button.dataset.pay;
   location.assign(LIVE_LINKS[product]);return;
-  button.disabled=true;const previous=button.textContent;button.textContent='Opening Stripe…';
-  try{
-   const response=await fetch('/.netlify/functions/create-checkout',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({package:product})
-   });
-   const result=await response.json();
-   if(!response.ok||!result.url)throw new Error(result.error||'Checkout unavailable');
-   location.assign(result.url);
-  }catch(error){
-   if(backendMode==='test'&&TEST_LINKS[product]){
-    location.assign(TEST_LINKS[product]);return;
-   }
-   message.textContent=error.message||'Checkout unavailable. Please contact us.';
-   button.disabled=false;button.textContent=previous;
-   message.scrollIntoView({block:'center',behavior:'smooth'});
-  }
+
  }));
 })();
 </script></body></html>
