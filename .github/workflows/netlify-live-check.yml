@@ -1,8 +1,11 @@
-name: Check deployed Netlify Stripe test checkout
+name: Verify public Dabsky payment and cancellation pages
 
 on:
   push:
     paths:
+      - "index.html"
+      - "payments.html"
+      - "payment-success.html"
       - ".github/workflows/netlify-live-check.yml"
   workflow_dispatch:
 
@@ -10,14 +13,48 @@ permissions:
   contents: read
 
 jobs:
-  check-deployment:
+  verify-public:
     runs-on: ubuntu-latest
     steps:
-      - name: Check deployed public payment pages
+      - name: Verify deployed Stripe portal links and test checkout
+        env:
+          SITE: https://dabskycreativestudio.netlify.app
+          PORTAL: https://billing.stripe.com/p/login/test_bJe3cv2KD9uPgL18Uf5AQ00
         run: |
-          set +e
-          echo "Checking public Netlify pages (no API keys involved)"
-          curl -sSL --max-time 25 --retry 2 -o /tmp/payments.html -w 'Payments page HTTP %{http_code}\n' 'https://dabskycreativestudio.netlify.app/payments.html'
-          curl -sSL --max-time 25 --retry 2 -o /tmp/checkout-status.json -w 'Function HTTP %{http_code}\n' 'https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'
-          echo 'Public checkout availability (safe status fields only):'
-          node -e "try {const j=require('/tmp/checkout-status.json'); console.log(JSON.stringify({enabled:j.enabled,mode:j.mode,packages:j.packages},null,2)); if(typeof j.enabled!=='boolean')process.exitCode=1} catch(e){console.log('Function not yet available: '+e.message);process.exitCode=1}"
+          node <<'JS'
+          const site = process.env.SITE, portal=process.env.PORTAL;
+          const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+          async function fetchText(url) {
+            const result=await fetch(url,{signal:AbortSignal.timeout(15000)});
+            return {ok:result.ok,status:result.status,text:await result.text()};
+          }
+          let last='Not deployed yet';
+          for (let attempt=1; attempt<=10; attempt++) {
+            try {
+              const [payments,home]=await Promise.all([fetchText(site+'/payments.html'),fetchText(site+'/')]);
+              if (!payments.ok || !home.ok) {
+                last='Site status: payments '+payments.status+', home '+home.status;
+              } else if (!payments.text.includes('id="manage-subscription"') || !payments.text.includes(portal)) {
+                last='New manage subscription section not yet deployed';
+              } else if (!home.text.includes('/payments.html#manage-subscription')) {
+                last='Homepage footer not yet deployed';
+              } else if (!payments.text.includes('https://buy.stripe.com/test_')) {
+                last='Stripe test payment links missing';
+              } else {
+                console.log('PASS: Public homepage and payment page include subscription management and test checkout.');
+                const status=await fetchText(site+'/.netlify/functions/create-checkout');
+                if(status.ok) {
+                  try{
+                    const data=JSON.parse(status.text);
+                    console.log('Netlify checkout mode (public non-secret): '+data.mode);
+                  }catch {console.log('Netlify checkout status not JSON');}
+                } else console.log('Netlify backend unavailable: '+status.status+'; Stripe Payment Link fallback retained.');
+                process.exit(0);
+              }
+            }catch(e){last=String(e?.message||e)}
+            console.log('Attempt '+attempt+': '+last);
+            if(attempt<10)await pause(8000);
+          }
+          console.error('Public Netlify verification failed: '+last);
+          process.exit(1);
+          JS
