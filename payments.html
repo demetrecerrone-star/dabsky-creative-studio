@@ -46,9 +46,13 @@
   const config=await response.json();
   buttons.forEach(button=>{
    const allowed=Boolean(config.enabled&&config.packages?.[button.dataset.pay]);
-   button.disabled=!allowed; button.textContent=allowed?'Secure checkout ↗':'Checkout not active';
+   button.disabled=!allowed; button.textContent=allowed?(config.mode==='test'?'Open test checkout ↗':'Secure checkout ↗'):'Checkout not active';
   });
-  message.textContent=buttons.some(b=>!b.disabled)?'Secure Stripe checkout is available for the enabled packages.':'Online checkout is being configured. No payment is collected here yet. Please request an invoice or quote.';
+  message.textContent=buttons.some(b=>!b.disabled)
+    ?(config.mode==='test'
+      ?'TEST MODE ONLY: simulated Stripe payments are enabled. Use Stripe test cards, not real payment details. No real money will be charged.'
+      :'Secure Stripe checkout is available for the enabled packages.')
+    :'Online checkout is being configured. No payment is collected here yet. Please request an invoice or quote.';
  }catch{message.textContent='Checkout is being configured. No payments are collected on this page yet. Contact us for a quote or invoice.';}
  if(new URLSearchParams(location.search).get('status')==='cancelled')message.textContent='Checkout was canceled; no payment was completed by this attempt.';
  buttons.forEach(button=>button.addEventListener('click',async()=>{
