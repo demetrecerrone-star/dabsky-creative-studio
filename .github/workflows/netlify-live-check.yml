@@ -1,0 +1,23 @@
+name: Check deployed Netlify Stripe test checkout
+
+on:
+  push:
+    paths:
+      - ".github/workflows/netlify-live-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check deployed public payment pages
+        run: |
+          set +e
+          echo "Checking public Netlify pages (no API keys involved)"
+          curl -sSL --max-time 25 --retry 2 -o /tmp/payments.html -w 'Payments page HTTP %{http_code}\n' 'https://dabskycreativestudio.netlify.app/payments.html'
+          curl -sSL --max-time 25 --retry 2 -o /tmp/checkout-status.json -w 'Function HTTP %{http_code}\n' 'https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'
+          echo 'Public checkout availability (safe status fields only):'
+          node -e "try {const j=require('/tmp/checkout-status.json'); console.log(JSON.stringify({enabled:j.enabled,mode:j.mode,packages:j.packages},null,2)); if(typeof j.enabled!=='boolean')process.exitCode=1} catch(e){console.log('Function not yet available: '+e.message);process.exitCode=1}"
