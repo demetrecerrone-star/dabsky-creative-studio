@@ -33,7 +33,7 @@
 <main class="payment-shell">
 <p class="kicker">DABSKY CREATIVE STUDIO • PAYMENTS</p>
 <h1>Let's build your <em>next big thing.</em></h1>
-<p class="payment-lead"><strong>Freelance services by Demetre S Cerrone.</strong> Dabsky Creative Studio is a planned future studio brand, not a separately registered company. All payment buttons are currently test-only.</p><p class="payment-lead">For clear-scope graphic design and content packages, use our secure Stripe-hosted checkout when available. Logo design, corporate branding, and custom advertising collateral receive a written quote and invoice before payment.</p>
+<p class="payment-lead"><strong>Freelance services by Demetre S Cerrone.</strong> Dabsky Creative Studio is a planned future studio brand, not a separately registered company. Live Stripe checkout is available for the packages below.</p><p class="payment-lead">For clear-scope graphic design and content packages, use our secure Stripe-hosted checkout when available. Logo design, corporate branding, and custom advertising collateral receive a written quote and invoice before payment.</p>
 <div class="payment-notice" id="payment-status" role="status" aria-live="polite">Checking checkout availability…</div>
 <nav class="payment-quick-links" aria-label="Payments and subscription management"><a href="#starter-checkout">Starter $79</a><a href="#growth-checkout">Growth $249/mo</a><a href="#premium-checkout">Premium $399/mo</a><a href="#manage-subscription">Manage or cancel a subscription ↓</a></nav>
 <div class="payment-cards">
@@ -44,11 +44,11 @@
 <section id="manage-subscription" aria-labelledby="manage-subscription-title" style="background:linear-gradient(150deg,#21142e,#130d1b);border:1px solid #76539b;border-radius:20px;padding:27px;margin:28px 0;">
 <p class="kicker">ALREADY SUBSCRIBED?</p>
 <h2 id="manage-subscription-title" style="margin:6px 0 8px;font-size:clamp(1.35rem,3vw,2rem)">Manage or cancel your subscription</h2>
-<p style="color:#c9bbd9;line-height:1.7;max-width:690px;">Access your Stripe billing portal to view invoices, update your payment method, or cancel your monthly plan. For now this portal is in <strong>TEST MODE</strong>—no real subscriptions or charges.</p>
-<a class="button button-outline" href="https://billing.stripe.com/p/login/test_bJe3cv2KD9uPgL18Uf5AQ00" rel="noopener noreferrer">Manage TEST subscription ↗</a>
+<p style="color:#c9bbd9;line-height:1.7;max-width:690px;">Manage your live subscription through the secure link provided in your Stripe billing emails. The portal below is only for existing sandbox subscriptions.</p>
+<a class="button button-outline" href="https://billing.stripe.com/p/login/test_bJe3cv2KD9uPgL18Uf5AQ00" rel="noopener noreferrer">Manage SANDBOX subscription ↗</a>
 <p style="color:#bcadce;font-size:13px;line-height:1.6;margin-top:12px;">Stripe will verify your email address before showing your subscription. Cancellation takes effect at the end of the billing period.</p>
 </section>
-<section class="payment-notice" id="custom-invoices" aria-labelledby="custom-invoices-title" style="margin:32px 0"><h2 id="custom-invoices-title">Custom freelance project invoices</h2><p>Freelance creative services are provided by Demetre S Cerrone. Request a written quote for logos, brand identity, promotional videos, and other custom projects. After we agree on the scope, price, and delivery schedule, you can receive a secure Stripe-hosted invoice.</p><p><strong>Payment options:</strong> full payment before work begins, or a separately agreed 50% deposit and 50% balance. Deposits, milestones, revision limits, and refund terms are confirmed in writing before any payment.</p><p><strong>Current status:</strong> Stripe invoicing is being tested. Do not submit real payments through test checkout. Invoices will only be issued for approved quotes after live Stripe verification is completed.</p><!-- Netlify Forms: detected during production build; requires form detection enabled in site settings. -->
+<section class="payment-notice" id="custom-invoices" aria-labelledby="custom-invoices-title" style="margin:32px 0"><h2 id="custom-invoices-title">Custom freelance project invoices</h2><p>Freelance creative services are provided by Demetre S Cerrone. Request a written quote for logos, brand identity, promotional videos, and other custom projects. After we agree on the scope, price, and delivery schedule, you can receive a secure Stripe-hosted invoice.</p><p><strong>Payment options:</strong> full payment before work begins, or a separately agreed 50% deposit and 50% balance. Deposits, milestones, revision limits, and refund terms are confirmed in writing before any payment.</p><p><strong>Current status:</strong> Custom invoices are issued only after we approve a written quote. Standard package checkout uses live Stripe payments.</p><!-- Netlify Forms: detected during production build; requires form detection enabled in site settings. -->
 <form class="invoice-request-form" id="invoice-request-form" name="custom-invoice-requests" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/payments.html"><input type="hidden" name="form-name" value="custom-invoice-requests"><p hidden><label>Do not fill out: <input name="bot-field"></label></p><label>Your name *<input name="name" required maxlength="100" autocomplete="name"></label><label>Email address *<input name="email" type="email" required maxlength="200" autocomplete="email"></label><label>Business or brand (optional)<input name="business" maxlength="130"></label><label>What do you need? *<select name="service" required><option value="">Choose a service</option><option>Logo design</option><option>Brand identity</option><option>Social media graphics</option><option>Promotional video</option><option>Other custom project</option></select></label><label>Estimated budget (optional)<select name="budget"><option value="">Not sure yet</option><option>Under $100</option><option>$100–$249</option><option>$250–$499</option><option>$500–$999</option><option>$1,000+</option></select></label><label>Project details *<textarea name="details" required maxlength="3000" placeholder="Tell us what you need, deadlines, and any creative direction."></textarea></label><button class="button button-outline" type="submit">Submit custom invoice request ↗</button><p class="invoice-request-status" id="invoice-request-status" role="status" aria-live="polite">Your request is submitted through the website, not your email app. This is a quote request, not an invoice or payment.</p></form></section>
 <p class="payment-foot">Services start after we confirm project details, turnaround time, and the scope of work. Subscriptions recur monthly until canceled. Stripe Checkout displays the final amount and any applicable taxes before you pay. Please contact us first for a custom quote or invoice: <a href="mailto:dabskycreativestudio@gmail.com">dabskycreativestudio@gmail.com</a>.</p>
 <a href="/" class="button button-ghost">← Back to Dabsky Creative Studio</a>
@@ -73,6 +73,11 @@ if(invoiceForm){invoiceForm.addEventListener('submit',async event=>{
 
 if(new URLSearchParams(location.search).get("request")==="received"){document.getElementById("invoice-request-status").textContent="Thank you! Your request was submitted. We will review the details and follow up by email.";}
 (async()=>{
+ const LIVE_LINKS=Object.freeze({
+  starter:'https://buy.stripe.com/bJe3cv2KD9uPgL18Uf5AQ00',
+  growth:'https://buy.stripe.com/6oUbJ170TfTd52j3zV5AQ01',
+  premium:'https://buy.stripe.com/28E6oH4SL4avcuL4DZ5AQ02'
+ });
  const TEST_LINKS=Object.freeze({
   starter:'https://buy.stripe.com/test_bJe3cv2KD9uPgL18Uf5AQ00',
   growth:'https://buy.stripe.com/test_6oUbJ170TfTd52j3zV5AQ01',
@@ -92,22 +97,16 @@ if(new URLSearchParams(location.search).get("request")==="received"){document.ge
  }catch{/* Stripe-hosted test links work without a serverless function. */}
  const backendReady=id=>(backendMode==='test'||backendMode==='live')&&backendPackages[id]===true;
  buttons.forEach(button=>{
-  button.disabled=!backendReady(button.dataset.pay)&&!TEST_LINKS[button.dataset.pay];
-  button.textContent=backendReady(button.dataset.pay)&&backendMode==='live'
-    ?'Secure checkout ↗':'Open TEST checkout ↗';
+  button.disabled=!LIVE_LINKS[button.dataset.pay];
+  button.textContent='Secure LIVE checkout ↗';
  });
- const liveReady=buttons.some(b=>backendReady(b.dataset.pay)&&backendMode==='live');
- message.textContent=liveReady
-  ?'Secure Stripe checkout is available for the enabled packages.'
-  :'TEST MODE ONLY: payment simulations are available using Stripe test cards. No real money will be charged. Do not enter real card details.';
+ message.textContent='LIVE PAYMENTS: Stripe securely processes real charges. Monthly plans renew until canceled. Review the package and amount before paying.';
  if(new URLSearchParams(location.search).get('status')==='cancelled')
    message.textContent='Checkout canceled. '+message.textContent;
  buttons.forEach(button=>button.addEventListener('click',async()=>{
   if(button.disabled)return;
   const product=button.dataset.pay;
-  if(!backendReady(product)){
-   location.assign(TEST_LINKS[product]);return;
-  }
+  location.assign(LIVE_LINKS[product]);return;
   button.disabled=true;const previous=button.textContent;button.textContent='Opening Stripe…';
   try{
    const response=await fetch('/.netlify/functions/create-checkout',{
