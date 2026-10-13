@@ -9,17 +9,26 @@ const PACKAGES = Object.freeze({
 const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8' };
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers });
 const siteUrl = () => (process.env.STRIPE_SITE_URL || 'https://dabskycreativestudio.netlify.app').replace(/\/$/, '');
-const configured = () => {
+const paymentMode = () => {
   const key = process.env.STRIPE_SECRET_KEY || '';
-  const keyAllowed = key.startsWith('sk_test_') || (key.startsWith('sk_live_') && process.env.STRIPE_ALLOW_LIVE === 'true');
-  return process.env.STRIPE_CHECKOUT_ENABLED === 'true' && keyAllowed;
+  // Safe default: test checkout works when the test key and Price IDs are present.
+  // An explicit false switch always disables it. Live payments require two
+  // independent, explicit switches and a live-mode key.
+  if (process.env.STRIPE_CHECKOUT_ENABLED === 'false') return 'disabled';
+  if (key.startsWith('sk_test_')) return 'test';
+  if (key.startsWith('sk_live_') &&
+      process.env.STRIPE_CHECKOUT_ENABLED === 'true' &&
+      process.env.STRIPE_ALLOW_LIVE === 'true') return 'live';
+  return 'disabled';
 };
+const configured = () => paymentMode() !== 'disabled';
 const hasPrice = p => typeof process.env[p.env] === 'string' && /^price_[a-zA-Z0-9]+$/.test(process.env[p.env]);
 
 export default async function handler(request) {
   if (request.method === 'GET') {
     return json({
       enabled: configured(),
+      mode: paymentMode(),
       packages: Object.fromEntries(Object.entries(PACKAGES).map(([name, product]) => [name, configured() && hasPrice(product)])),
     });
   }
