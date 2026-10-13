@@ -37,3 +37,22 @@
 .studio-intro-fallback img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.65}
 .studio-intro-fallback span{position:relative;z-index:1;align-self:end;margin:0 0 25px;letter-spacing:2px;font-size:12px;font-weight:800;text-shadow:0 2px 12px #000}
 @media(max-width:760px){.studio-intro-grid{grid-template-columns:1fr}.studio-intro-video{min-height:unset}}
+
+/* Lightweight animated studio introduction, shown while hosted MP4 is unavailable */
+.studio-intro-fallback{position:relative;aspect-ratio:16/9;isolation:isolate;background:radial-gradient(circle at 50% 56%,#50238d 0%,#1a1133 35%,#070711 75%);overflow:hidden;display:grid;place-items:center}
+.studio-intro-nebula{position:absolute;inset:-24%;background:radial-gradient(ellipse at 40% 44%,#b464ff67,transparent 34%),radial-gradient(ellipse at 68% 63%,#4b68db57,transparent 35%),radial-gradient(ellipse at 30% 68%,#7a35df4d,transparent 30%);filter:blur(20px);animation:studioNebula 8s ease-in-out infinite alternate;z-index:-2}
+.studio-intro-ring{position:absolute;width:58%;aspect-ratio:1;border:2px solid #bf92ff4a;border-radius:50%;box-shadow:0 0 42px #9359ff5c,inset 0 0 45px #9b59ec55;transform:rotateX(61deg) rotate(-12deg);animation:studioRing 8s linear infinite;z-index:-1}
+.studio-intro-ring-two{width:75%;border-style:dotted;opacity:.55;animation-duration:12s;animation-direction:reverse}
+.studio-intro-glints{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,#fff 0 1px,transparent 2px),radial-gradient(circle,#deb9ff 0 1px,transparent 2px),radial-gradient(circle,#b98cff 0 2px,transparent 3px);background-size:67px 83px,95px 121px,181px 153px;background-position:4px 3px,26px 55px,92px 28px;opacity:.65;animation:studioStars 5s ease-in-out infinite alternate}
+.studio-intro-lockup{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:24px 20px;animation:studioReveal 7s ease-in-out infinite}
+.studio-intro-lockup strong{font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,5.7vw,73px);line-height:.98;letter-spacing:.12em;font-weight:700;color:#f6f0ff;text-shadow:0 0 10px #f4e3ff,0 0 33px #a461fc,0 3px 5px #080313}
+.studio-intro-monogram{width:clamp(35px,6vw,64px);aspect-ratio:1;position:relative;display:grid;place-items:center;color:#fff;font:700 clamp(24px,4vw,47px) Georgia,serif;border:1px solid #dbc2ff91;border-radius:15px;background:linear-gradient(145deg,#9b5de9,#241047);box-shadow:0 0 25px #a66fff73;margin-bottom:8px}
+.studio-intro-monogram span{position:absolute;top:0;right:6px;font:12px Arial,sans-serif}
+.studio-intro-subtitle{color:#e2d5f9;font-size:clamp(8px,1.2vw,15px);letter-spacing:.45em;font-weight:800;margin-top:8px}
+.studio-intro-services{display:block;color:#c4a4e2;font-size:clamp(7px,.9vw,11px);letter-spacing:.2em;font-weight:800;margin-top:15px}
+.studio-intro-services i{color:#f9dbff;font-size:.8em;font-style:normal;margin:0 5px}
+@keyframes studioNebula{0%{transform:scale(1) rotate(-8deg)}100%{transform:scale(1.18) rotate(9deg)}}
+@keyframes studioRing{0%{transform:rotateX(61deg) rotate(0deg)}100%{transform:rotateX(61deg) rotate(360deg)}}
+@keyframes studioStars{0%{opacity:.3;transform:scale(1)}100%{opacity:.9;transform:scale(1.08)}}
+@keyframes studioReveal{0%,5%{opacity:0;transform:translateY(16px) scale(.93);filter:blur(5px)}20%,85%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}95%,100%{opacity:0;transform:translateY(-8px) scale(1.04);filter:blur(3px)}}
+@media(prefers-reduced-motion:reduce){.studio-intro-nebula,.studio-intro-ring,.studio-intro-glints,.studio-intro-lockup{animation:none!important;opacity:1;filter:none}}
