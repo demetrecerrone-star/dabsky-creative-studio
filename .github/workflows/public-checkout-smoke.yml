@@ -1,0 +1,45 @@
+name: Verify public Dabsky payment deployment
+on:
+  push:
+    paths:
+      - ".github/workflows/public-checkout-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check public static site and Stripe test-mode endpoint
+        env:
+          SITE: https://dabskycreativestudio.netlify.app
+        run: |
+          node <<'JS'
+          const site = process.env.SITE;
+          const pause = ms => new Promise(done => setTimeout(done, ms));
+          let last = '';
+          for (let attempt=1; attempt<=6; attempt++) {
+            try {
+              const homepage = await fetch(site + '/payments.html', {signal:AbortSignal.timeout(15000)});
+              const resp = await fetch(site + '/.netlify/functions/create-checkout', {signal:AbortSignal.timeout(15000),headers: {'Cache-Control':'no-cache'}});
+              const type = resp.headers.get('content-type') || '';
+              if (!homepage.ok || !resp.ok || !type.includes('application/json')) {
+                last = 'HTTP responses: payments=' + homepage.status + ', checkout=' + resp.status + ', type=' + type;
+              } else {
+                const data = await resp.json();
+                console.log('Checkout state:',JSON.stringify({enabled:data.enabled,mode:data.mode,packages:data.packages}));
+                if(data.enabled === true && data.mode === 'test' && ['starter','growth','premium'].every(id=>data.packages?.[id]===true)) {
+                  console.log('PASS: Netlify deployed with Stripe test checkout enabled; live payments are disabled.');
+                  process.exit(0);
+                }
+                last = 'Test checkout is not yet fully enabled on the public site.';
+              }
+            } catch(e) { last = String(e?.message || e); }
+            console.log('Attempt',attempt,'-',last);
+            if(attempt<6)await pause(10000);
+          }
+          console.error('Public deployment not verified:',last);
+          process.exit(1);
+          JS
