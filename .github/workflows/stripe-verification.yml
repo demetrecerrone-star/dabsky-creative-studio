@@ -63,5 +63,19 @@ jobs:
             body:JSON.stringify({package:'unknown',price:1})
           }));
           if(invalid.status!==400)throw new Error('Unknown package was not rejected');
-          console.log('Checkout fails closed and rejects unknown packages.');
+          process.env.STRIPE_SECRET_KEY = 'sk_test_ci_mock_only';
+          process.env.STRIPE_PRICE_STARTER = 'price_fake_test_1';
+          process.env.STRIPE_PRICE_GROWTH = 'price_fake_test_2';
+          process.env.STRIPE_PRICE_PREMIUM = 'price_fake_test_3';
+          const testGet = await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'));
+          const testState = await testGet.json();
+          if(testState.mode!=='test' || !testState.enabled || !testState.packages.starter || !testState.packages.growth || !testState.packages.premium)throw new Error('Test mode failed to auto-enable');
+          process.env.STRIPE_CHECKOUT_ENABLED = 'false';
+          const disabledState = await (await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'))).json();
+          if(disabledState.enabled)throw new Error('Explicit disable switch ignored');
+          delete process.env.STRIPE_CHECKOUT_ENABLED;
+          process.env.STRIPE_SECRET_KEY = 'sk_live_ci_mock_only';
+          const noLive = await (await handler(new Request('https://dabskycreativestudio.netlify.app/.netlify/functions/create-checkout'))).json();
+          if(noLive.enabled)throw new Error('Live mode enabled without authorization');
+          console.log('Test-only checkout activates safely and live mode remains disabled.');
           JS
