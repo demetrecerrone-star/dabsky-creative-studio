@@ -40,6 +40,25 @@
       </div>
     </section>
     <div class="trust-ribbon" aria-label="Our approach"><div class="ribbon-track"><span>✦ SOCIAL MEDIA DESIGN</span><span>✦ CREATIVE DIRECTION</span><span>✦ CUSTOM BRAND COLORS</span><span>✦ PROMOTIONAL CAMPAIGNS</span><span>✦ READY-TO-POST CONTENT</span></div></div>
+    <section class="section studio-intro-section" id="studio-intro" aria-labelledby="studio-intro-title">
+      <div class="wrap studio-intro-grid">
+        <div class="studio-intro-text">
+          <p class="kicker">MEET THE STUDIO</p>
+          <h2 id="studio-intro-title">A little magic. <em>A lot of creativity.</em></h2>
+          <p>Meet Dabsky Creative Studio: custom social graphics, content, and promotional videos designed around what makes your business unique.</p>
+          <a class="button button-primary" href="#contact">Start your project <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="studio-intro-video">
+          <video id="studio-intro-player" controls playsinline preload="none" poster="assets/brand-mark.webp" aria-label="Dabsky Creative Studio animated brand introduction" hidden>
+            <source src="assets/dabsky-creative-studio-intro.mp4" type="video/mp4" />
+          </video>
+          <div id="studio-intro-fallback" class="studio-intro-fallback" aria-label="Dabsky Creative Studio">
+            <img src="assets/brand-mark.webp" alt="Dabsky Creative Studio brand mark" loading="lazy" />
+            <span>DESIGN • CONTENT • VIDEO</span>
+          </div>
+        </div>
+      </div>
+    </section>
     <section class="section section-featured wrap" aria-labelledby="featured-title"><div class="section-heading"><div><p class="kicker">A GLIMPSE OF WHAT'S POSSIBLE</p><h2 id="featured-title">Not just pretty.<br/><em>Purposefully unforgettable.</em></h2></div><p>Different industries need different energy. Explore the range of concepts we've created—from bold and cinematic to warm and understated.</p></div>
       <div class="feature-grid"><article class="feature-card"><img src="assets/food-italian.webp" alt="Bella Forno Italian restaurant social media concept in cream and red" loading="lazy"/><div class="feature-overlay"><span>FOOD & HOSPITALITY</span><h3>Warm. Welcoming. Delicious.</h3></div></article><article class="feature-card"><img src="assets/beauty-florist.webp" alt="Bloom and Vine florist campaign in soft pastel greens and blush pink" loading="lazy"/><div class="feature-overlay"><span>RETAIL & LIFESTYLE</span><h3>Soft details. Big feeling.</h3></div></article><article class="feature-card"><img src="assets/services-roofing.webp" alt="Summit Roofing advertising concept in charcoal and orange" loading="lazy"/><div class="feature-overlay"><span>LOCAL SERVICES</span><h3>Bold by design.</h3></div></article></div>
       <p class="concept-note">All showcased brand names and campaigns are fictional portfolio concepts, created to demonstrate our design approach—not endorsements or past client work.</p>
@@ -101,5 +120,15 @@
   </main>
   <footer class="footer"><div class="wrap"><div class="footer-top"><a class="brand footer-brand" href="#top"><span class="brand-monogram" aria-hidden="true">D<span>✦</span></span><span class="brand-name">DABSKY<small>CREATIVE STUDIO</small></span></a><p>Stand out. Stay remembered.</p><a class="back-top" href="#top">Back to top ↑</a></div><div class="footer-bottom"><span>© <span id="year">2026</span> Dabsky Creative Studio. All rights reserved.</span><span><a class="footer-email" href="mailto:dabskycreativestudio@gmail.com">dabskycreativestudio@gmail.com</a> · All showcased campaigns are fictional creative concepts.</span></div></div></footer>
   <dialog id="work-dialog" class="work-dialog" aria-label="Portfolio concept preview"><button class="dialog-close" id="dialog-close" aria-label="Close image preview">✕</button><img id="dialog-image" alt=""/><div class="dialog-caption"><strong id="dialog-title"></strong><span>FICTIONAL PORTFOLIO CONCEPT</span></div><div class="dialog-controls"><button id="dialog-prev" aria-label="Previous example">←</button><button id="dialog-next" aria-label="Next example">→</button></div></dialog>
+  <script>
+    (function () {
+      var p=document.getElementById('studio-intro-player');
+      var f=document.getElementById('studio-intro-fallback');
+      if (!p || !f) return;
+      fetch('assets/dabsky-creative-studio-intro.mp4',{method:'HEAD'})
+        .then(function(r){if(r.ok){p.hidden=false;f.hidden=true;}})
+        .catch(function(){});
+    }());
+  </script>
 </body>
 </html>
