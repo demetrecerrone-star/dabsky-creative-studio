@@ -18,6 +18,11 @@
 .payment-notice{background:#2b193e;border:1px solid #7b53a3;padding:19px 20px;border-radius:14px;color:#efe3fa;line-height:1.65}
 .payment-foot{font-size:14px;color:#bbafca;line-height:1.8}
 .payment-foot a{color:#e5bfff;text-decoration:underline}
+.payment-card{scroll-margin-top:95px}
+#manage-subscription{scroll-margin-top:95px}
+.payment-quick-links{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:18px 0 28px}
+.payment-quick-links a{border:1px solid #775298;background:#24152f;color:#eed5ff;border-radius:50px;padding:10px 13px;font-size:12px;font-weight:750;line-height:1.4}
+.payment-quick-links a:hover,.payment-quick-links a:focus-visible{border-color:#c798fc;background:#322046}
 @media(max-width:760px){.payment-cards{grid-template-columns:1fr}}
 </style></head><body>
 <header class="site-header"><nav class="nav wrap" aria-label="Payment page navigation">
@@ -28,10 +33,11 @@
 <h1>Let's build your <em>next big thing.</em></h1>
 <p class="payment-lead">For clear-scope graphic design and content packages, use our secure Stripe-hosted checkout when available. Logo design, corporate branding, and custom advertising collateral receive a written quote and invoice before payment.</p>
 <div class="payment-notice" id="payment-status" role="status" aria-live="polite">Checking checkout availability…</div>
+<nav class="payment-quick-links" aria-label="Payments and subscription management"><a href="#starter-checkout">Starter $79</a><a href="#growth-checkout">Growth $249/mo</a><a href="#premium-checkout">Premium $399/mo</a><a href="#manage-subscription">Manage or cancel a subscription ↓</a></nav>
 <div class="payment-cards">
-<article class="payment-card"><h2>Starter Trial</h2><div class="amount">$79 <small>one-time</small></div><p>Four custom social graphics, four captions, your business's own colors, and one revision round.</p><button type="button" data-pay="starter" class="button button-outline" disabled>Checkout not active</button></article>
-<article class="payment-card"><h2>Business Growth</h2><div class="amount">$249 <small>per month</small></div><p>Eight custom graphics, matching captions, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="growth" class="button button-primary" disabled>Checkout not active</button></article>
-<article class="payment-card"><h2>Premium Brand</h2><div class="amount">$399 <small>per month</small></div><p>Twelve graphics, twelve captions, four story graphics, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="premium" class="button button-outline" disabled>Checkout not active</button></article>
+<article class="payment-card" id="starter-checkout"><h2>Starter Trial</h2><div class="amount">$79 <small>one-time</small></div><p>Four custom social graphics, four captions, your business's own colors, and one revision round.</p><button type="button" data-pay="starter" class="button button-outline" disabled>Checkout not active</button></article>
+<article class="payment-card" id="growth-checkout"><h2>Business Growth</h2><div class="amount">$249 <small>per month</small></div><p>Eight custom graphics, matching captions, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="growth" class="button button-primary" disabled>Checkout not active</button></article>
+<article class="payment-card" id="premium-checkout"><h2>Premium Brand</h2><div class="amount">$399 <small>per month</small></div><p>Twelve graphics, twelve captions, four story graphics, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="premium" class="button button-outline" disabled>Checkout not active</button></article>
 </div>
 <section id="manage-subscription" aria-labelledby="manage-subscription-title" style="background:linear-gradient(150deg,#21142e,#130d1b);border:1px solid #76539b;border-radius:20px;padding:27px;margin:28px 0;">
 <p class="kicker">ALREADY SUBSCRIBED?</p>
