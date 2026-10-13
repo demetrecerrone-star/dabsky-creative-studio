@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0711"><meta name="robots" content="noindex">
+<title>Secure Payments | Dabsky Creative Studio</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+<style>
+.payment-shell{width:min(1050px,calc(100% - 36px));margin:auto;padding:65px 0 110px}
+.payment-shell h1{font-size:clamp(2.5rem,6vw,5rem);margin:18px 0 20px}
+.payment-lead{max-width:730px;color:#c0b3d1;line-height:1.8}
+.payment-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:32px 0}
+.payment-card{background:linear-gradient(165deg,#21142e,#130d1b);border:1px solid #634483;border-radius:20px;padding:27px;display:flex;flex-direction:column;gap:12px}
+.payment-card h2{font-size:24px;letter-spacing:-.04em;margin:0}
+.payment-card .amount{font-weight:800;font-size:40px;color:#fff}
+.payment-card .amount small{font-size:12px;color:#ac98c1}
+.payment-card p{color:#c1b4d1;line-height:1.65;font-size:13px;flex:1}
+.payment-card .button{width:100%}
+.payment-card button:disabled{opacity:.7;cursor:not-allowed}
+.payment-notice{background:#2b193e;border:1px solid #7b53a3;padding:19px 20px;border-radius:14px;color:#efe3fa;line-height:1.65}
+.payment-foot{font-size:14px;color:#bbafca;line-height:1.8}
+.payment-foot a{color:#e5bfff;text-decoration:underline}
+@media(max-width:760px){.payment-cards{grid-template-columns:1fr}}
+</style></head><body>
+<header class="site-header"><nav class="nav wrap" aria-label="Payment page navigation">
+<a class="brand" href="/" aria-label="Dabsky homepage"><span class="brand-monogram">D<span>✦</span></span><span class="brand-name">DABSKY<small>CREATIVE STUDIO</small></span></a>
+<a href="/#contact" class="button button-outline">Request a quote ↗</a></nav></header>
+<main class="payment-shell">
+<p class="kicker">DABSKY CREATIVE STUDIO • PAYMENTS</p>
+<h1>Let's build your <em>next big thing.</em></h1>
+<p class="payment-lead">For clear-scope graphic design and content packages, use our secure Stripe-hosted checkout when available. Logo design, corporate branding, and custom advertising collateral receive a written quote and invoice before payment.</p>
+<div class="payment-notice" id="payment-status" role="status" aria-live="polite">Checking checkout availability…</div>
+<div class="payment-cards">
+<article class="payment-card"><h2>Starter Trial</h2><div class="amount">$79 <small>one-time</small></div><p>Four custom social graphics, four captions, your business's own colors, and one revision round.</p><button type="button" data-pay="starter" class="button button-outline" disabled>Checkout not active</button></article>
+<article class="payment-card"><h2>Business Growth</h2><div class="amount">$249 <small>per month</small></div><p>Eight custom graphics, matching captions, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="growth" class="button button-primary" disabled>Checkout not active</button></article>
+<article class="payment-card"><h2>Premium Brand</h2><div class="amount">$399 <small>per month</small></div><p>Twelve graphics, twelve captions, four story graphics, a monthly posting calendar, and one revision round.</p><button type="button" data-pay="premium" class="button button-outline" disabled>Checkout not active</button></article>
+</div>
+<p class="payment-foot">Services start after we confirm project details, turnaround time, and the scope of work. Subscriptions recur monthly until canceled. Stripe Checkout displays the final amount and any applicable taxes before you pay. Please contact us first for a custom quote or invoice: <a href="mailto:dabskycreativestudio@gmail.com">dabskycreativestudio@gmail.com</a>.</p>
+<a href="/" class="button button-ghost">← Back to Dabsky Creative Studio</a>
+</main>
+<script>
+(async()=>{
+ const message=document.getElementById('payment-status');
+ const buttons=[...document.querySelectorAll('[data-pay]')];
+ try{
+  const response=await fetch('/.netlify/functions/create-checkout',{cache:'no-store'});
+  if(!response.ok)throw new Error('Not available');
+  const config=await response.json();
+  buttons.forEach(button=>{
+   const allowed=Boolean(config.enabled&&config.packages?.[button.dataset.pay]);
+   button.disabled=!allowed; button.textContent=allowed?'Secure checkout ↗':'Checkout not active';
+  });
+  message.textContent=buttons.some(b=>!b.disabled)?'Secure Stripe checkout is available for the enabled packages.':'Online checkout is being configured. No payment is collected here yet. Please request an invoice or quote.';
+ }catch{message.textContent='Checkout is being configured. No payments are collected on this page yet. Contact us for a quote or invoice.';}
+ if(new URLSearchParams(location.search).get('status')==='cancelled')message.textContent='Checkout was canceled; no payment was completed by this attempt.';
+ buttons.forEach(button=>button.addEventListener('click',async()=>{
+  if(button.disabled)return;
+  button.disabled=true;const previous=button.textContent;button.textContent='Opening Stripe…';
+  try{
+   const response=await fetch('/.netlify/functions/create-checkout',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({package:button.dataset.pay})
+   });
+   const result=await response.json();
+   if(!response.ok||!result.url)throw new Error(result.error||'Checkout unavailable');
+   location.assign(result.url);
+  }catch(error){message.textContent=error.message||'Checkout unavailable. Please contact us.';button.disabled=false;button.textContent=previous;message.scrollIntoView({block:'center',behavior:'smooth'});}
+ }));
+})();
+</script></body></html>
